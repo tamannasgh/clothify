@@ -5,6 +5,7 @@ import {
 	signInWithEmailAndPassword,
 	GoogleAuthProvider,
 	signInWithPopup,
+	signOut,
 } from "firebase/auth";
 import { auth } from "./firebase";
 
@@ -21,12 +22,17 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		const provider = new GoogleAuthProvider();
 		return signInWithPopup(auth, provider);
 	}
+
+	function logout() {
+		return signOut(auth);
+	}
 	return (
 		<FirebaseContext.Provider
 			value={{
 				signupWithEmail,
 				loginWithEmail,
 				continueWithGoogle,
+				logout,
 			}}
 		>
 			{children}

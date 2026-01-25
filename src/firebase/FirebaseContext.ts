@@ -4,13 +4,14 @@ import { createContext } from "react";
 type FirebaseContextType = {
 	signupWithEmail: (
 		email: string,
-		password: string
+		password: string,
 	) => Promise<UserCredential>;
 	loginWithEmail: (
 		email: string,
-		password: string
+		password: string,
 	) => Promise<UserCredential>;
 	continueWithGoogle: () => Promise<UserCredential>;
+	logout: () => Promise<void>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);

@@ -14,14 +14,14 @@ function useAuthActions() {
 			setError(null);
 			setLoading(true);
 			await action();
-			navigate("/dashboard");
+			navigate("/products");
 		} catch (e) {
 			console.log("there was some error");
 			if (e instanceof FirebaseError) {
 				setError(e);
 			} else {
 				setError(
-					new FirebaseError("unknown", "Unknown error occurred")
+					new FirebaseError("unknown", "Unknown error occurred"),
 				);
 			}
 		} finally {
