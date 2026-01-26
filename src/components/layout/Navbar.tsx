@@ -35,7 +35,7 @@ function Navbar() {
 							<User />
 						</NavigationMenuTrigger>
 						<NavigationMenuContent>
-							<ul>
+							<ul className="w-28">
 								<li>
 									<NavigationMenuLink>
 										<Link to={"/orders"}>Orders</Link>

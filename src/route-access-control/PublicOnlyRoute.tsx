@@ -9,7 +9,14 @@ function PublicOnlyRoutes() {
 		return <Spinner className="w-1/6 m-auto h-1/12 mt-24" />;
 	}
 
-	return user ? <Navigate to={"/products"} /> : <Outlet />;
+	return user ? (
+		<Navigate
+			to={"/products"}
+			replace
+		/>
+	) : (
+		<Outlet />
+	);
 }
 
 export default PublicOnlyRoutes;

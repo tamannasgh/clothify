@@ -9,7 +9,14 @@ function ProtectedRoute() {
 		return <Spinner className="w-1/6 m-auto h-1/12 mt-24" />;
 	}
 
-	return user ? <Outlet /> : <Navigate to={"/login"} />;
+	return user ? (
+		<Outlet />
+	) : (
+		<Navigate
+			to={"/login"}
+			replace
+		/>
+	);
 }
 
 export default ProtectedRoute;
