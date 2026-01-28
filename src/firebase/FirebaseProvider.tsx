@@ -7,7 +7,8 @@ import {
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
-import { auth } from "./firebase";
+import { setDoc, doc, getDoc } from "firebase/firestore";
+import { auth, db } from "./firebase";
 
 function FirebaseProvider({ children }: { children: ReactNode }) {
 	function signupWithEmail(email: string, password: string) {
@@ -26,6 +27,29 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 	function logout() {
 		return signOut(auth);
 	}
+
+	function setUserDoc(data: {
+		uid: string;
+		name: string;
+		email: string;
+		photoUrl: string;
+	}) {
+		const userDocRef = doc(db, "users", data.uid);
+		return setDoc(userDocRef, {
+			name: data.name,
+			email: data.email,
+			roles: ["user"],
+			photoUrl: data.photoUrl,
+			createdAt: new Date(),
+		});
+	}
+
+	async function getUserDoc(uid: string) {
+		const docRef = doc(db, "users", uid);
+		const userSnapshot = await getDoc(docRef);
+		return userSnapshot;
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -33,6 +57,8 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				loginWithEmail,
 				continueWithGoogle,
 				logout,
+				setUserDoc,
+				getUserDoc,
 			}}
 		>
 			{children}

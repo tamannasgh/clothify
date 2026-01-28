@@ -3,13 +3,13 @@ import useAuth from "@/providers/auth/useAuth";
 import { Outlet, Navigate } from "react-router";
 
 function ProtectedRoute() {
-	const { user, loading } = useAuth();
+	const { firebaseUser, loading } = useAuth();
 
 	if (loading) {
 		return <Spinner className="w-1/6 m-auto h-1/12 mt-24" />;
 	}
 
-	return user ? (
+	return firebaseUser ? (
 		<Outlet />
 	) : (
 		<Navigate

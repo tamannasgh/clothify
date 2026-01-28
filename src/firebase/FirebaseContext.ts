@@ -1,4 +1,5 @@
 import type { UserCredential } from "firebase/auth";
+import type { DocumentSnapshot } from "firebase/firestore";
 import { createContext } from "react";
 
 type FirebaseContextType = {
@@ -12,6 +13,13 @@ type FirebaseContextType = {
 	) => Promise<UserCredential>;
 	continueWithGoogle: () => Promise<UserCredential>;
 	logout: () => Promise<void>;
+	setUserDoc: (data: {
+		uid: string;
+		name: string;
+		email: string;
+		photoUrl: string;
+	}) => Promise<void>;
+	getUserDoc: (uid: string) => Promise<DocumentSnapshot>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);

@@ -12,6 +12,7 @@ import Orders from "@/pages/main/Orders";
 import Profile from "@/pages/shared/Profile";
 import SellerLayout from "@/layouts/SellerLayout";
 import SellerProducts from "@/pages/seller/Products";
+import SellerRoute from "./route-access-control/SellerRoute";
 
 function App() {
 	return (
@@ -52,11 +53,13 @@ function App() {
 									element={<Profile />}
 								/>
 							</Route>
-							<Route element={<SellerLayout />}>
-								<Route
-									path="/seller/products"
-									element={<SellerProducts />}
-								/>
+							<Route element={<SellerRoute />}>
+								<Route element={<SellerLayout />}>
+									<Route
+										path="/seller/products"
+										element={<SellerProducts />}
+									/>
+								</Route>
 							</Route>
 						</Route>
 					</Routes>

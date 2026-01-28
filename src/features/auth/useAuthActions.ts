@@ -29,16 +29,48 @@ function useAuthActions() {
 		}
 	}
 
-	function signupWithEmail(email: string, password: string) {
-		return runAuthAction(() => firebase.signupWithEmail(email, password));
+	function signupWithEmail(name: string, email: string, password: string) {
+		return runAuthAction(async () => {
+			const { user } = await firebase.signupWithEmail(email, password);
+			return firebase.setUserDoc({
+				uid: user.uid,
+				name: user.displayName || name,
+				email: user.email || email,
+				photoUrl: user.photoURL || "https://shorturl.at/oW8QV",
+			});
+		});
 	}
 
 	function loginWithEmail(email: string, password: string) {
-		return runAuthAction(() => firebase.loginWithEmail(email, password));
+		return runAuthAction(async () => {
+			const { user } = await firebase.loginWithEmail(email, password);
+			const userData = await firebase.getUserDoc(user.uid);
+			if (userData.data()) {
+				return userData.data();
+			}
+			return firebase.setUserDoc({
+				uid: user.uid,
+				name: user.displayName || "",
+				email: user.email || email,
+				photoUrl: user.photoURL || "https://shorturl.at/oW8QV",
+			});
+		});
 	}
 
 	function continueWithGoogle() {
-		return runAuthAction(() => firebase.continueWithGoogle());
+		return runAuthAction(async () => {
+			const { user } = await firebase.continueWithGoogle();
+			const userData = await firebase.getUserDoc(user.uid);
+			if (userData.data()) {
+				return userData.data();
+			}
+			return firebase.setUserDoc({
+				uid: user.uid,
+				name: user.displayName || "",
+				email: user.email || "",
+				photoUrl: user.photoURL || "https://shorturl.at/oW8QV",
+			});
+		});
 	}
 
 	return {

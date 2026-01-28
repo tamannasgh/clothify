@@ -15,6 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 function Signup() {
 	const { signupWithEmail, continueWithGoogle, error, loading } =
 		useAuthActions();
+	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -24,11 +25,23 @@ function Signup() {
 				<FieldSet>
 					<FieldGroup>
 						<Field>
+							<FieldLabel htmlFor="name">Name</FieldLabel>
+							<Input
+								id="name"
+								type="text"
+								placeholder="full name"
+								required
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+							/>
+						</Field>
+						<Field>
 							<FieldLabel htmlFor="email">Email</FieldLabel>
 							<Input
 								id="email"
 								type="text"
 								placeholder="your@email.com"
+								required
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 							/>
@@ -42,6 +55,7 @@ function Signup() {
 								id="password"
 								type="password"
 								placeholder="••••••••"
+								required
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 							/>
@@ -54,7 +68,7 @@ function Signup() {
 				<Button
 					className="w-full mt-7 cursor-pointer"
 					disabled={loading}
-					onClick={() => signupWithEmail(email, password)}
+					onClick={() => signupWithEmail(name, email, password)}
 				>
 					Sign up
 					{loading ? <Spinner /> : null}
