@@ -7,7 +7,7 @@ import {
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
-import { setDoc, doc, getDoc } from "firebase/firestore";
+import { setDoc, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db } from "./firebase";
 
 function FirebaseProvider({ children }: { children: ReactNode }) {
@@ -50,6 +50,13 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return userSnapshot;
 	}
 
+	async function addSellerRole(uid: string) {
+		const docRef = doc(db, "users", uid);
+		return updateDoc(docRef, {
+			roles: arrayUnion("seller"),
+		});
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -59,6 +66,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				logout,
 				setUserDoc,
 				getUserDoc,
+				addSellerRole,
 			}}
 		>
 			{children}

@@ -45,7 +45,7 @@ function useAuthActions() {
 		return runAuthAction(async () => {
 			const { user } = await firebase.loginWithEmail(email, password);
 			const userData = await firebase.getUserDoc(user.uid);
-			if (userData.data()) {
+			if (userData.exists()) {
 				return userData.data();
 			}
 			return firebase.setUserDoc({
@@ -61,7 +61,7 @@ function useAuthActions() {
 		return runAuthAction(async () => {
 			const { user } = await firebase.continueWithGoogle();
 			const userData = await firebase.getUserDoc(user.uid);
-			if (userData.data()) {
+			if (userData.exists()) {
 				return userData.data();
 			}
 			return firebase.setUserDoc({

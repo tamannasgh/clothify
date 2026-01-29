@@ -1,5 +1,5 @@
 function Upload() {
-	return <div>Upload</div>;
+	return <div>Seller Upload</div>;
 }
 
 export default Upload;

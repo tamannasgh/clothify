@@ -6,7 +6,7 @@ function MainLayout() {
 	return (
 		<div className="flex flex-col min-h-dvh">
 			<Navbar />
-			<div className="p-10 flex-1">
+			<div className="p-10 flex-1 flex">
 				<Outlet />
 			</div>
 			<Footer />

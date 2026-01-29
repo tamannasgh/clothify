@@ -20,6 +20,7 @@ type FirebaseContextType = {
 		photoUrl: string;
 	}) => Promise<void>;
 	getUserDoc: (uid: string) => Promise<DocumentSnapshot>;
+	addSellerRole: (uid: string) => Promise<void>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);
