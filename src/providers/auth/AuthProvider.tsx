@@ -22,13 +22,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
 	}, []);
 
 	useEffect(() => {
-		const uid = firebaseUser?.uid;
-		if (!uid) return;
-		const unsubscribe = onSnapshot(doc(db, "users", uid), (userData) => {
-			console.log(userData.data());
-			setUser(userData.data() ?? null);
-			setLoading(false);
-		});
+		if (!firebaseUser) return;
+		const unsubscribe = onSnapshot(
+			doc(db, "users", firebaseUser.uid),
+			(userData) => {
+				setUser(userData.data() ?? null);
+				setLoading(false);
+			},
+		);
 		return unsubscribe;
 	}, [firebaseUser]);
 

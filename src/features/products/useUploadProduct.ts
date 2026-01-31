@@ -2,21 +2,30 @@ import useFirebase from "@/firebase/useFirebase";
 import useAuth from "@/providers/auth/useAuth";
 import { FirebaseError } from "firebase/app";
 import { useState } from "react";
-import { useNavigate } from "react-router";
 
-function useBecomeSeller() {
+function useUploadProduct() {
 	const firebase = useFirebase();
 	const { firebaseUser } = useAuth();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<FirebaseError | null>(null);
-	const navigate = useNavigate();
 
-	async function becomeSeller() {
+	async function createProduct(data: {
+		name: string;
+		des: string;
+		price: number;
+		images: File[];
+	}) {
 		try {
 			setLoading(true);
-			const uid = firebaseUser?.uid ?? "";
-			await firebase.becomeSeller(uid);
-			navigate("/seller/products");
+			setError(null);
+			if (!firebaseUser) {
+				throw new FirebaseError("auth", "Login required");
+			}
+
+			await firebase.createProduct({
+				...data,
+				sellerId: firebaseUser.uid,
+			});
 		} catch (e) {
 			console.log("there was some error");
 			const err =
@@ -30,7 +39,8 @@ function useBecomeSeller() {
 			setLoading(false);
 		}
 	}
-	return { becomeSeller, loading, error };
+
+	return { loading, error, createProduct };
 }
 
-export default useBecomeSeller;
+export default useUploadProduct;

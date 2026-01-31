@@ -8,7 +8,7 @@ function SellerLayout() {
 			<Navbar />
 			<div className="flex h-full">
 				<SellerSidebar />
-				<div className="p-10">
+				<div className="p-10 w-full">
 					<Outlet />
 				</div>
 			</div>

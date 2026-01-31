@@ -58,7 +58,7 @@ function App() {
 								/>
 								<Route element={<NonSellerRoute />}>
 									<Route
-										path="seller/become"
+										path="/seller/become"
 										element={<BecomeSeller />}
 									/>
 								</Route>

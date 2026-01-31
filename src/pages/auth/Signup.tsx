@@ -77,9 +77,7 @@ function Signup() {
 				<Button
 					className="w-full cursor-pointer"
 					disabled={loading}
-					onClick={() => {
-						continueWithGoogle();
-					}}
+					onClick={continueWithGoogle}
 				>
 					Continue with google
 					{loading ? <Spinner /> : null}

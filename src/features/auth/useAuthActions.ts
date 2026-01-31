@@ -17,13 +17,13 @@ function useAuthActions() {
 			navigate("/products");
 		} catch (e) {
 			console.log("there was some error");
-			if (e instanceof FirebaseError) {
-				setError(e);
-			} else {
-				setError(
-					new FirebaseError("unknown", "Unknown error occurred"),
-				);
-			}
+			const err =
+				e instanceof FirebaseError
+					? e
+					: new FirebaseError("unknown", "Unknown error occurred");
+
+			setError(err);
+			throw err;
 		} finally {
 			setLoading(false);
 		}

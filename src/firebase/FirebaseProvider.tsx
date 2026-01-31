@@ -7,8 +7,16 @@ import {
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
-import { setDoc, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import { auth, db } from "./firebase";
+import {
+	setDoc,
+	doc,
+	getDoc,
+	updateDoc,
+	arrayUnion,
+	collection,
+} from "firebase/firestore";
+import { auth, db, storage } from "./firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function FirebaseProvider({ children }: { children: ReactNode }) {
 	function signupWithEmail(email: string, password: string) {
@@ -50,11 +58,50 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return userSnapshot;
 	}
 
-	async function addSellerRole(uid: string) {
+	async function becomeSeller(uid: string) {
 		const docRef = doc(db, "users", uid);
 		return updateDoc(docRef, {
 			roles: arrayUnion("seller"),
 		});
+	}
+
+	async function createProduct(data: {
+		name: string;
+		des: string;
+		price: number;
+		images: File[];
+		sellerId: string;
+	}) {
+		const productColRef = collection(db, "products");
+		const EmptyProductDocRef = doc(productColRef);
+		const productId = EmptyProductDocRef.id;
+
+		//async doen't work in forEach
+		const imagesUrl: { downloadUrl: string; imagePath: string }[] =
+			await Promise.all(
+				data.images.map((image) =>
+					uploadFileAndGetUrl(
+						image,
+						`products/${data.sellerId}/${productId}/${Date.now()}-${image.name}`,
+					),
+				),
+			);
+
+		return setDoc(EmptyProductDocRef, {
+			name: data.name,
+			des: data.des,
+			price: data.price,
+			images: imagesUrl,
+			sellerId: data.sellerId,
+			createdAt: new Date(),
+		});
+	}
+
+	async function uploadFileAndGetUrl(image: File, imagePath: string) {
+		const imgRef = ref(storage, imagePath);
+		await uploadBytes(imgRef, image);
+		const downloadUrl = await getDownloadURL(imgRef);
+		return { downloadUrl, imagePath };
 	}
 
 	return (
@@ -66,7 +113,8 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				logout,
 				setUserDoc,
 				getUserDoc,
-				addSellerRole,
+				becomeSeller,
+				createProduct,
 			}}
 		>
 			{children}

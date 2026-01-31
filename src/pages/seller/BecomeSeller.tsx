@@ -3,7 +3,7 @@ import { Spinner } from "@/components/ui/spinner";
 import useBecomeSeller from "@/features/user/useBecomeSeller";
 
 function BecomeSeller() {
-	const { loading, addSellerRole, error } = useBecomeSeller();
+	const { loading, becomeSeller, error } = useBecomeSeller();
 	return (
 		<div className="flex-1 flex flex-col items-center justify-center">
 			<h1 className="text-4xl font-semibold mb-5">
@@ -12,7 +12,7 @@ function BecomeSeller() {
 			<Button
 				className="cursor-pointer"
 				disabled={loading}
-				onClick={addSellerRole}
+				onClick={becomeSeller}
 			>
 				Get Started
 				{loading ? <Spinner /> : null}
