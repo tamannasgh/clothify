@@ -20,6 +20,7 @@ function Upload() {
 						name: formData.get("name") as string,
 						des: formData.get("des") as string,
 						price: Number(formData.get("price")),
+						quantity: Number(formData.get("quantity")),
 						images: formData.getAll("images") as File[],
 					};
 					try {
@@ -58,6 +59,16 @@ function Upload() {
 								name="price"
 								type="number"
 								placeholder="price"
+								required
+							/>
+						</Field>
+						<Field>
+							<FieldLabel htmlFor="quantity">Quantity</FieldLabel>
+							<Input
+								id="quantity"
+								name="quantity"
+								type="number"
+								placeholder="quantity"
 								required
 							/>
 						</Field>

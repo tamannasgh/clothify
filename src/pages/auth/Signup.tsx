@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import useAuthActions from "@/features/auth/useAuthActions";
 import { Spinner } from "@/components/ui/spinner";
+import { Link } from "react-router";
 
 function Signup() {
 	const { signupWithEmail, continueWithGoogle, error, loading } =
@@ -20,7 +21,7 @@ function Signup() {
 	const [password, setPassword] = useState("");
 
 	return (
-		<div className="h-screen w-screen flex justify-center items-center p-2">
+		<div className="h-screen w-screen flex flex-col justify-center items-center p-2">
 			<div className="w-full max-w-sm">
 				<FieldSet>
 					<FieldGroup>
@@ -83,6 +84,12 @@ function Signup() {
 					{loading ? <Spinner /> : null}
 				</Button>
 			</div>
+			<Link
+				to={"/login"}
+				className="mt-10 text-sm underline"
+			>
+				already have an account? login.
+			</Link>
 		</div>
 	);
 }

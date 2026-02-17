@@ -9,8 +9,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<DocumentData | null>(null);
 	const [loading, setLoading] = useState(true);
 
+	//for getting firebase user to see that user is logged in.
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+		const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
 			setfirebaseUser(firebaseUser);
 			if (!firebaseUser) {
 				setUser(null);
@@ -21,6 +22,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 		return unsubscribe;
 	}, []);
 
+	// this runs after the firebase user loaded as we are fetching that user's doc for getting the roles
 	useEffect(() => {
 		if (!firebaseUser) return;
 		const unsubscribe = onSnapshot(

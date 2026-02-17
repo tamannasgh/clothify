@@ -14,6 +14,9 @@ import {
 	updateDoc,
 	arrayUnion,
 	collection,
+	getDocs,
+	query,
+	where,
 } from "firebase/firestore";
 import { auth, db, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -69,6 +72,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		name: string;
 		des: string;
 		price: number;
+		quantity: number;
 		images: File[];
 		sellerId: string;
 	}) {
@@ -91,6 +95,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 			name: data.name,
 			des: data.des,
 			price: data.price,
+			quantity: data.quantity,
 			images: imagesUrl,
 			sellerId: data.sellerId,
 			createdAt: new Date(),
@@ -104,6 +109,15 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return { downloadUrl, imagePath };
 	}
 
+	async function getProducts(sellerId?: string) {
+		const colRef = collection(db, "products");
+		const q = sellerId
+			? query(colRef, where("sellerId", "==", sellerId))
+			: query(colRef);
+		const querySnapshot = await getDocs(q);
+		return querySnapshot;
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -115,6 +129,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				getUserDoc,
 				becomeSeller,
 				createProduct,
+				getProducts,
 			}}
 		>
 			{children}

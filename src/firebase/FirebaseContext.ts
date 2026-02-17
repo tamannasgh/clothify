@@ -1,5 +1,5 @@
 import type { UserCredential } from "firebase/auth";
-import type { DocumentSnapshot } from "firebase/firestore";
+import type { DocumentSnapshot, QuerySnapshot } from "firebase/firestore";
 import { createContext } from "react";
 
 type FirebaseContextType = {
@@ -25,9 +25,11 @@ type FirebaseContextType = {
 		name: string;
 		des: string;
 		price: number;
+		quantity: number;
 		images: File[];
 		sellerId: string;
 	}) => Promise<void>;
+	getProducts: (sellerId?: string) => Promise<QuerySnapshot>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);

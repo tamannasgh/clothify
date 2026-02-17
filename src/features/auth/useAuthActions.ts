@@ -32,6 +32,7 @@ function useAuthActions() {
 	function signupWithEmail(name: string, email: string, password: string) {
 		return runAuthAction(async () => {
 			const { user } = await firebase.signupWithEmail(email, password);
+
 			return firebase.setUserDoc({
 				uid: user.uid,
 				name: user.displayName || name,

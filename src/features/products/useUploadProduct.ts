@@ -2,17 +2,20 @@ import useFirebase from "@/firebase/useFirebase";
 import useAuth from "@/providers/auth/useAuth";
 import { FirebaseError } from "firebase/app";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 function useUploadProduct() {
 	const firebase = useFirebase();
 	const { firebaseUser } = useAuth();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<FirebaseError | null>(null);
+	const navigate = useNavigate();
 
 	async function createProduct(data: {
 		name: string;
 		des: string;
 		price: number;
+		quantity: number;
 		images: File[];
 	}) {
 		try {
@@ -26,6 +29,7 @@ function useUploadProduct() {
 				...data,
 				sellerId: firebaseUser.uid,
 			});
+			navigate("/seller/products");
 		} catch (e) {
 			console.log("there was some error");
 			const err =

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import useAuthActions from "@/features/auth/useAuthActions";
 import { Spinner } from "@/components/ui/spinner";
+import { Link } from "react-router";
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ function Login() {
 		useAuthActions();
 
 	return (
-		<div className="h-screen w-screen flex justify-center items-center p-2">
+		<div className="h-screen w-screen flex flex-col justify-center items-center p-2">
 			<div className="w-full max-w-sm">
 				<FieldSet>
 					<FieldGroup>
@@ -67,6 +68,12 @@ function Login() {
 					{loading ? <Spinner /> : null}
 				</Button>
 			</div>
+			<Link
+				to={"/signup"}
+				className="mt-10 text-sm underline"
+			>
+				new? create new account.
+			</Link>
 		</div>
 	);
 }
