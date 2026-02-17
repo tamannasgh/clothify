@@ -32,9 +32,29 @@ function Products() {
 	) : (
 		<div>
 			<h1 className="text-3xl font-semibold">Your products</h1>
-			{products.map((product) => {
-				return <p key={product.id}>{product.name}</p>;
-			})}
+			<div className="flex gap-4 mt-10">
+				{products.map((product) => {
+					return (
+						<div className="shadow-lg">
+							<img
+								src={product.images[0].downloadUrl}
+								alt="product image"
+								className="w-full h-36 object-cover object-top rounded-t-4xl"
+							/>
+							<div className="p-4">
+								<h2
+									key={product.id}
+									className="text-xl font-semibold"
+								>
+									{product.name}
+								</h2>
+								<h3 className="text-sm">Rs.{product.price}</h3>
+								<p className="text-xs">{product.des}</p>
+							</div>
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 }
