@@ -1,20 +1,10 @@
 import useFirebase from "@/firebase/useFirebase";
 import { FirebaseError } from "firebase/app";
 import { useEffect, useState } from "react";
-
-type Product = {
-	id: string;
-	name: string;
-	des: string;
-	price: number;
-	quantity: number;
-	images: { downloadUrl: string; imagePath: string }[];
-	sellerId: string;
-	createdAt: Date;
-};
+import { type Product } from "@/features/products/hooks/useProduct";
 
 function useProducts(sellerId?: string) {
-	const [products, setProducts] = useState<Product[]>([]);
+	const [products, setProducts] = useState<Product[] | null>(null);
 	const [error, setError] = useState<FirebaseError | null>(null);
 	const [loading, setLoading] = useState(false);
 	const firebase = useFirebase();

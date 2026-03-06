@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import useAuthActions from "@/features/auth/useAuthActions";
+import useAuthActions from "@/features/auth/hooks/useAuthActions";
 import { Spinner } from "@/components/ui/spinner";
 import { Link } from "react-router";
 

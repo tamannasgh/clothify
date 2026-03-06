@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import useBecomeSeller from "@/features/user/useBecomeSeller";
+import useBecomeSeller from "@/features/user/hooks/useBecomeSeller";
 
 function BecomeSeller() {
 	const { loading, becomeSeller, error } = useBecomeSeller();

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Signup from "@/pages/auth/Signup";
 import Login from "@/pages/auth/Login";
 import FirebaseProvider from "@/firebase/FirebaseProvider";
@@ -17,6 +17,7 @@ import SellerOrders from "@/pages/seller/Orders";
 import SellerRoute from "@/route-access-control/SellerRoute";
 import BecomeSeller from "@/pages/seller/BecomeSeller";
 import NonSellerRoute from "@/route-access-control/NonSellerRoute";
+import ProductDetails from "./pages/shared/ProductDetails";
 
 function App() {
 	return (
@@ -38,12 +39,18 @@ function App() {
 							<Route element={<MainLayout />}>
 								<Route
 									index
-									element={<Products />}
+									element={<Navigate to="products" />}
 								/>
-								<Route
-									path="/products"
-									element={<Products />}
-								/>
+								<Route path="products">
+									<Route
+										index
+										element={<Products />}
+									/>
+									<Route
+										path=":productId"
+										element={<ProductDetails />}
+									/>
+								</Route>
 								<Route
 									path="/cart"
 									element={<Cart />}

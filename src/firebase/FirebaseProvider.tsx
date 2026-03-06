@@ -118,6 +118,11 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return querySnapshot;
 	}
 
+	function getProduct(productId: string) {
+		const docRef = doc(db, "products", productId);
+		return getDoc(docRef);
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -130,6 +135,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				becomeSeller,
 				createProduct,
 				getProducts,
+				getProduct,
 			}}
 		>
 			{children}

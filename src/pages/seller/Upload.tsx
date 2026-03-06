@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import useUploadProduct from "@/features/products/useUploadProduct";
+import useUploadProduct from "@/features/products/hooks/useUploadProduct";
 
 function Upload() {
 	const { loading, error, createProduct } = useUploadProduct();

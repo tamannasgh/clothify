@@ -30,6 +30,7 @@ type FirebaseContextType = {
 		sellerId: string;
 	}) => Promise<void>;
 	getProducts: (sellerId?: string) => Promise<QuerySnapshot>;
+	getProduct: (productId: string) => Promise<DocumentSnapshot>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);
