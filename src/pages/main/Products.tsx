@@ -1,10 +1,16 @@
+import AddToCart from "@/features/cart/components/AddToCart";
 import ProductList from "@/features/products/components/ProductList";
+import type { Product } from "@/features/products/hooks/useProduct";
 
 function Products() {
 	return (
 		<div>
-			<h1 className="text-3xl font-semibold mb-5">Products page</h1>
-			<ProductList emptyProductsLine="There are no products yet!" />
+			<ProductList
+				emptyProductsLine="There are no products yet!"
+				actionsFunctionForCard={(product: Product) => (
+					<AddToCart product={product} />
+				)}
+			/>
 		</div>
 	);
 }

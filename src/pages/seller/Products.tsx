@@ -1,13 +1,17 @@
 import useAuth from "@/providers/auth/useAuth";
 import { Link } from "react-router";
 import ProductList from "@/features/products/components/ProductList";
+import { Spinner } from "@/components/ui/spinner";
 
 function Products() {
-	const { firebaseUser } = useAuth();
+	const { firebaseUser, loading } = useAuth();
+
+	if (loading) {
+		return <Spinner className="w-1/6 m-auto h-1/12 mt-24" />;
+	}
 
 	return (
 		<div>
-			<h1 className="text-3xl font-semibold mb-5">Your products</h1>
 			<ProductList
 				sellerId={firebaseUser?.uid}
 				emptyProductsLine={
@@ -22,6 +26,7 @@ function Products() {
 						!
 					</>
 				}
+				actionsFunctionForCard={() => <h1>just test</h1>}
 			/>
 		</div>
 	);

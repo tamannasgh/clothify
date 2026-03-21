@@ -17,6 +17,7 @@ import {
 	getDocs,
 	query,
 	where,
+	deleteDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -123,6 +124,23 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return getDoc(docRef);
 	}
 
+	function addToCart(userId: string, productId: string) {
+		const docRef = doc(db, "users", userId, "cart", productId);
+		return setDoc(docRef, { quantity: 1 });
+	}
+
+	function updateCartItemQuantity(
+		userId: string,
+		cartItemId: string,
+		quantity: number,
+	) {
+		const docRef = doc(db, "users", userId, "cart", cartItemId);
+		if (quantity < 1) {
+			return deleteDoc(docRef);
+		}
+		return updateDoc(docRef, { quantity });
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -136,6 +154,8 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				createProduct,
 				getProducts,
 				getProduct,
+				addToCart,
+				updateCartItemQuantity,
 			}}
 		>
 			{children}

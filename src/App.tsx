@@ -70,13 +70,18 @@ function App() {
 									/>
 								</Route>
 							</Route>
-
 							<Route element={<SellerRoute />}>
 								<Route element={<SellerLayout />}>
-									<Route
-										path="/seller/products"
-										element={<SellerProducts />}
-									/>
+									<Route path="/seller/products">
+										<Route
+											index
+											element={<SellerProducts />}
+										/>
+										<Route
+											path=":productId"
+											element={<ProductDetails />}
+										/>
+									</Route>
 									<Route
 										path="/seller/upload"
 										element={<SellerUplaod />}

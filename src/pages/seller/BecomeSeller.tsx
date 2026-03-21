@@ -17,7 +17,7 @@ function BecomeSeller() {
 				Get Started
 				{loading ? <Spinner /> : null}
 			</Button>
-			{error && <p className="text-red-600">{error.message}</p>}
+			{error && <p>{error.message}</p>}
 		</div>
 	);
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { type Product } from "@/features/products/hooks/useProduct";
 
 function useProducts(sellerId?: string) {
-	const [products, setProducts] = useState<Product[] | null>(null);
+	const [products, setProducts] = useState<Product[]>([]);
 	const [error, setError] = useState<FirebaseError | null>(null);
 	const [loading, setLoading] = useState(false);
 	const firebase = useFirebase();
@@ -16,16 +16,10 @@ function useProducts(sellerId?: string) {
 				setLoading(true);
 				const products = await firebase.getProducts(sellerId);
 				const finalData = products.docs.map((product) => {
-					const productData = {
-						name: product.data().name,
-						des: product.data().des,
-						images: product.data().images,
-						price: product.data().price,
-						quantity: product.data().quantity,
-						sellerId: product.data().sellerId,
-						createdAt: product.data().createdAt,
+					return {
+						id: product.id,
+						...(product.data() as Omit<Product, "id">),
 					};
-					return { id: product.id, ...productData };
 				});
 				setProducts(finalData);
 			} catch (e) {

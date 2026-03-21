@@ -23,20 +23,14 @@ function useProduct(productId: string) {
 		async function getProduct() {
 			try {
 				const product = await firebase.getProduct(productId);
-				console.log(product);
 				if (!product.exists()) {
-					throw Error("This Product doesn't exists.");
+					setProduct(null);
+				} else {
+					setProduct({
+						id: product.id,
+						...(product.data() as Omit<Product, "id">),
+					});
 				}
-				const finalProduct = {
-					name: product.data().name,
-					des: product.data().des,
-					images: product.data().images,
-					price: product.data().price,
-					quantity: product.data().quantity,
-					sellerId: product.data().sellerId,
-					createdAt: product.data().createdAt,
-				};
-				setProduct({ id: product.id, ...finalProduct });
 			} catch (e) {
 				console.log("there was some error");
 				const err =

@@ -31,6 +31,12 @@ type FirebaseContextType = {
 	}) => Promise<void>;
 	getProducts: (sellerId?: string) => Promise<QuerySnapshot>;
 	getProduct: (productId: string) => Promise<DocumentSnapshot>;
+	addToCart: (userId: string, productId: string) => Promise<void>;
+	updateCartItemQuantity: (
+		userId: string,
+		cartItemId: string,
+		quantity: number,
+	) => Promise<void>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);
