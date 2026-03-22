@@ -1,5 +1,10 @@
+import type { CartItem } from "@/features/cart/hooks/useCartItem";
 import type { UserCredential } from "firebase/auth";
-import type { DocumentSnapshot, QuerySnapshot } from "firebase/firestore";
+import type {
+	DocumentSnapshot,
+	QuerySnapshot,
+	Unsubscribe,
+} from "firebase/firestore";
 import { createContext } from "react";
 
 type FirebaseContextType = {
@@ -25,7 +30,7 @@ type FirebaseContextType = {
 		name: string;
 		des: string;
 		price: number;
-		quantity: number;
+		stock: number;
 		images: File[];
 		sellerId: string;
 	}) => Promise<void>;
@@ -41,7 +46,11 @@ type FirebaseContextType = {
 		userId: string,
 		cartItemId: string,
 		callback: (quantity: number) => void,
-	) => void;
+	) => Unsubscribe;
+	getCartItems: (
+		userId: string,
+		callback: (cartItems: CartItem[]) => void,
+	) => Unsubscribe;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);

@@ -11,14 +11,14 @@ function AddToCart({ product }: { product: Product }) {
 	function handleClick(e: React.MouseEvent) {
 		e.stopPropagation();
 		e.preventDefault();
-		addToCart(product.id);
+		addToCart();
 	}
 
 	function updateCart(e: React.MouseEvent, increase: boolean) {
 		e.stopPropagation();
 		e.preventDefault();
 		const countToBeUpdate = increase ? itemCount + 1 : itemCount - 1;
-		updateCartItemQuantity(product.id, countToBeUpdate);
+		updateCartItemQuantity(countToBeUpdate);
 	}
 
 	return itemCount < 1 ? (
@@ -48,12 +48,12 @@ function AddToCart({ product }: { product: Product }) {
 			<Plus
 				size={16}
 				className={clsx(
-					itemCount < product.quantity && "cursor-pointer",
-					itemCount >= product.quantity &&
+					itemCount < product.stock && "cursor-pointer",
+					itemCount >= product.stock &&
 						"cursor-not-allowed text-gray-600",
 				)}
 				onClick={(e: React.MouseEvent) => {
-					if (itemCount >= product.quantity) return;
+					if (itemCount >= product.stock) return;
 					updateCart(e, true);
 				}}
 			/>

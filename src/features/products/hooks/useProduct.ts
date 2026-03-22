@@ -7,7 +7,7 @@ export type Product = {
 	name: string;
 	des: string;
 	price: number;
-	quantity: number;
+	stock: number;
 	images: { downloadUrl: string; imagePath: string }[];
 	sellerId: string;
 	createdAt: Date;

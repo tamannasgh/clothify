@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 import { auth, db, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import type { CartItem } from "@/features/cart/hooks/useCartItem";
 
 function FirebaseProvider({ children }: { children: ReactNode }) {
 	function signupWithEmail(email: string, password: string) {
@@ -74,7 +75,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		name: string;
 		des: string;
 		price: number;
-		quantity: number;
+		stock: number;
 		images: File[];
 		sellerId: string;
 	}) {
@@ -97,7 +98,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 			name: data.name,
 			des: data.des,
 			price: data.price,
-			quantity: data.quantity,
+			stock: data.stock,
 			images: imagesUrl,
 			sellerId: data.sellerId,
 			createdAt: new Date(),
@@ -148,13 +149,38 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		callback: (quantity: number) => void,
 	) {
 		const docRef = doc(db, "users", userId, "cart", cartItemId);
-		onSnapshot(docRef, (doc) => {
+		const unsubscribe = onSnapshot(docRef, (doc) => {
 			if (doc.exists()) {
 				callback(doc.data().quantity);
 			} else {
 				callback(0);
 			}
 		});
+		return unsubscribe;
+	}
+
+	function getCartItems(
+		userId: string,
+		callback: (cartItems: CartItem[]) => void,
+	) {
+		const colRef = collection(db, "users", userId, "cart");
+		const unsubscribe = onSnapshot(query(colRef), async (cartItems) => {
+			const FinalCartItems = await Promise.all(
+				cartItems.docs.map(async (item) => {
+					const productDetails = await getProduct(item.id);
+					return {
+						...(productDetails.data() as Omit<
+							CartItem,
+							"id" | "quantity"
+						>),
+						quantity: item.data().quantity,
+						id: item.id,
+					};
+				}),
+			);
+			callback(FinalCartItems);
+		});
+		return unsubscribe;
 	}
 
 	return (
@@ -173,6 +199,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				addToCart,
 				updateCartItemQuantity,
 				getCartItemCount,
+				getCartItems,
 			}}
 		>
 			{children}

@@ -15,7 +15,7 @@ function useUploadProduct() {
 		name: string;
 		des: string;
 		price: number;
-		quantity: number;
+		stock: number;
 		images: File[];
 	}) {
 		try {
