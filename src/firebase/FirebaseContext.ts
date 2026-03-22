@@ -37,6 +37,11 @@ type FirebaseContextType = {
 		cartItemId: string,
 		quantity: number,
 	) => Promise<void>;
+	getCartItemCount: (
+		userId: string,
+		cartItemId: string,
+		callback: (quantity: number) => void,
+	) => void;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);

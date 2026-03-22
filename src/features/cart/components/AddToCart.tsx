@@ -1,18 +1,16 @@
 import { Minus, Plus } from "lucide-react";
-import React, { useState } from "react";
 import type { Product } from "@/features/products/hooks/useProduct";
 import clsx from "clsx";
 import useCartItem from "../hooks/useCartItem";
 
 function AddToCart({ product }: { product: Product }) {
-	const [itemCount, setItemCount] = useState(0);
-	const { addToCart, updateCartItemQuantity } = useCartItem();
+	const { addToCart, updateCartItemQuantity, itemCount } = useCartItem(
+		product.id,
+	);
 
 	function handleClick(e: React.MouseEvent) {
 		e.stopPropagation();
 		e.preventDefault();
-		console.log("clicked", product.name);
-		setItemCount(1);
 		addToCart(product.id);
 	}
 
@@ -20,8 +18,6 @@ function AddToCart({ product }: { product: Product }) {
 		e.stopPropagation();
 		e.preventDefault();
 		const countToBeUpdate = increase ? itemCount + 1 : itemCount - 1;
-		setItemCount(countToBeUpdate);
-		console.log("will update the cart to ", countToBeUpdate, product.name);
 		updateCartItemQuantity(product.id, countToBeUpdate);
 	}
 
