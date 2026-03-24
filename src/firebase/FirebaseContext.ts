@@ -1,4 +1,5 @@
 import type { CartItem } from "@/features/cart/hooks/useCartItem";
+import type { Order } from "@/features/orders/types";
 import type { UserCredential } from "firebase/auth";
 import type {
 	DocumentSnapshot,
@@ -51,6 +52,7 @@ type FirebaseContextType = {
 		userId: string,
 		callback: (cartItems: CartItem[]) => void,
 	) => Unsubscribe;
+	createOrder: (order: Order) => Promise<void>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);

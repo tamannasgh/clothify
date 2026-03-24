@@ -4,11 +4,16 @@ import useCart from "@/features/cart/hooks/useCart";
 import { Trash } from "lucide-react";
 
 function Cart() {
-	const { cartItems, dataLoaded, removeFromCart } = useCart();
+	const { cartItems, dataLoaded, removeFromCart, proceedPayment } = useCart();
 
 	if (!dataLoaded) {
 		return <Spinner className="w-1/6 m-auto h-1/12 mt-24" />;
 	}
+
+	const grandTotal = cartItems.reduce(
+		(prevVal, currItem) => prevVal + currItem.price * currItem.quantity,
+		0,
+	);
 
 	return cartItems.length < 1 ? (
 		<h1 className="text-3xl font-semibold">Cart is empty!</h1>
@@ -43,6 +48,15 @@ function Cart() {
 					</div>
 				);
 			})}
+			<div className="text-center mt-10">
+				<h2 className="text-xl">Grand total: {grandTotal}</h2>
+				<button
+					className="cursor-pointer bg-yellow-300 py-3 px-7 rounded-2xl font-semibold mt-3 hover:bg-yellow-400"
+					onClick={() => proceedPayment(cartItems, grandTotal)}
+				>
+					Proceed Payment
+				</button>
+			</div>
 		</div>
 	);
 }

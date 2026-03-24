@@ -19,10 +19,13 @@ import {
 	where,
 	deleteDoc,
 	onSnapshot,
+	writeBatch,
 } from "firebase/firestore";
 import { auth, db, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import type { CartItem } from "@/features/cart/hooks/useCartItem";
+import type { Order } from "@/features/orders/types";
+import { FirebaseError } from "firebase/app";
 
 function FirebaseProvider({ children }: { children: ReactNode }) {
 	function signupWithEmail(email: string, password: string) {
@@ -183,6 +186,47 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return unsubscribe;
 	}
 
+	async function createOrder(order: Order) {
+		try {
+			const batch = writeBatch(db);
+
+			const docRef = doc(collection(db, "orders"));
+
+			//create order doc in oredrs collection
+			batch.set(docRef, order);
+
+			//clear cart - delete all docs from cart collection
+			const cartDocs = await getDocs(
+				collection(db, "users", order.buyerId, "cart"),
+			);
+			cartDocs.forEach((cartDoc) => {
+				batch.delete(cartDoc.ref);
+			});
+
+			//update quantity of all products
+			await Promise.all(
+				order.orderItems.map(async (orderItem) => {
+					const orderItemRef = doc(db, "products", orderItem.id);
+					const orderItemData = await getDoc(orderItemRef);
+					if (!orderItemData.exists()) {
+						throw new FirebaseError(
+							"unknown",
+							"order item doesn't exist",
+						);
+					}
+					batch.update(orderItemRef, {
+						stock: orderItemData.data()?.stock - orderItem.quantity,
+					});
+				}),
+			);
+
+			await batch.commit();
+		} catch (err) {
+			console.log("Error occured: ", err);
+			throw err;
+		}
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -200,6 +244,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				updateCartItemQuantity,
 				getCartItemCount,
 				getCartItems,
+				createOrder,
 			}}
 		>
 			{children}
