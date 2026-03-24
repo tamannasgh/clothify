@@ -227,6 +227,11 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
+	function getOrders(userId: string) {
+		const colRef = collection(db, "orders");
+		return getDocs(query(colRef, where("buyerId", "==", userId)));
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -245,6 +250,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				getCartItemCount,
 				getCartItems,
 				createOrder,
+				getOrders,
 			}}
 		>
 			{children}

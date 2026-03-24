@@ -10,6 +10,7 @@ type OrderItem = {
 	sellerId: string;
 };
 type Order = {
+	id: string;
 	buyerId: string;
 	createdAt: Date;
 	sellerIds: string[];
