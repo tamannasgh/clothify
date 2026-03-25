@@ -20,12 +20,12 @@ import {
 	deleteDoc,
 	onSnapshot,
 	writeBatch,
+	increment,
 } from "firebase/firestore";
 import { auth, db, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import type { CartItem } from "@/features/cart/hooks/useCartItem";
 import type { Order } from "@/features/orders/types";
-import { FirebaseError } from "firebase/app";
 
 function FirebaseProvider({ children }: { children: ReactNode }) {
 	function signupWithEmail(email: string, password: string) {
@@ -204,21 +204,12 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 			});
 
 			//update quantity of all products
-			await Promise.all(
-				order.orderItems.map(async (orderItem) => {
-					const orderItemRef = doc(db, "products", orderItem.id);
-					const orderItemData = await getDoc(orderItemRef);
-					if (!orderItemData.exists()) {
-						throw new FirebaseError(
-							"unknown",
-							"order item doesn't exist",
-						);
-					}
-					batch.update(orderItemRef, {
-						stock: orderItemData.data()?.stock - orderItem.quantity,
-					});
-				}),
-			);
+			order.orderItems.forEach((orderItem) => {
+				const orderItemRef = doc(db, "products", orderItem.id);
+				batch.update(orderItemRef, {
+					stock: increment(-orderItem.quantity),
+				});
+			});
 
 			await batch.commit();
 		} catch (err) {
@@ -230,6 +221,49 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 	function getOrders(userId: string) {
 		const colRef = collection(db, "orders");
 		return getDocs(query(colRef, where("buyerId", "==", userId)));
+	}
+
+	function getOrder(
+		orderId: string,
+		callback: (orderDetails: Order | null) => void,
+	) {
+		const docRef = doc(db, "orders", orderId);
+		const unsubscribe = onSnapshot(docRef, (order) => {
+			if (!order.exists()) {
+				callback(null);
+				return;
+			}
+			callback({
+				id: order.id,
+				...(order.data() as Omit<Order, "id" | "createdAt">),
+				createdAt: order.data()?.createdAt.toDate(),
+			});
+		});
+		return unsubscribe;
+	}
+
+	async function cancelOrder(order: Order) {
+		try {
+			const batch = writeBatch(db);
+
+			const docRef = doc(db, "orders", order.id);
+
+			//update order doc in oredrs collection
+			batch.update(docRef, { status: "cancelled" });
+
+			//update quantity of all products
+			order.orderItems.forEach((orderItem) => {
+				const orderItemRef = doc(db, "products", orderItem.id);
+				batch.update(orderItemRef, {
+					stock: increment(orderItem.quantity),
+				});
+			});
+
+			await batch.commit();
+		} catch (err) {
+			console.log("Error occured: ", err);
+			throw err;
+		}
 	}
 
 	return (
@@ -251,6 +285,8 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				getCartItems,
 				createOrder,
 				getOrders,
+				getOrder,
+				cancelOrder,
 			}}
 		>
 			{children}

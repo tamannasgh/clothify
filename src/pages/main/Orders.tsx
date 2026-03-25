@@ -1,6 +1,7 @@
 import { Spinner } from "@/components/ui/spinner";
 import useOrders from "@/features/orders/hooks/useOrders";
 import clsx from "clsx";
+import { Link } from "react-router";
 
 function Orders() {
 	const { orders, loading, error } = useOrders();
@@ -23,14 +24,19 @@ function Orders() {
 				return (
 					<div
 						key={order.id}
-						className="flex w-full justify-between items-center bg-gray-50 p-5 shadow-md rounded-2xl mb-3"
+						className="flex flex-wrap w-full justify-between items-center bg-gray-50 p-5 shadow-md rounded-2xl mb-3"
 					>
 						<h2>
 							<span className="font-semibold mr-3">
 								{index + 1}.
 							</span>
-							order-
-							{order.id.substring(0, 7)}
+							<Link
+								to={`/orders/${order.id}`}
+								className="underline font-semibold"
+							>
+								order-
+								{order.id.substring(0, 7)}
+							</Link>
 						</h2>
 						<h2>
 							<span className="font-semibold">On Date : </span>

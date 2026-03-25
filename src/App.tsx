@@ -18,6 +18,7 @@ import SellerRoute from "@/route-access-control/SellerRoute";
 import BecomeSeller from "@/pages/seller/BecomeSeller";
 import NonSellerRoute from "@/route-access-control/NonSellerRoute";
 import ProductDetails from "./pages/shared/ProductDetails";
+import OrderDetails from "./pages/main/OrderDetails";
 
 function App() {
 	return (
@@ -55,10 +56,16 @@ function App() {
 									path="/cart"
 									element={<Cart />}
 								/>
-								<Route
-									path="/orders"
-									element={<Orders />}
-								/>
+								<Route path="/orders">
+									<Route
+										index
+										element={<Orders />}
+									/>
+									<Route
+										path=":orderId"
+										element={<OrderDetails />}
+									/>
+								</Route>
 								<Route
 									path="/profile"
 									element={<Profile />}
