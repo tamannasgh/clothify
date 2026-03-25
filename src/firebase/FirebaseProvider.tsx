@@ -21,6 +21,7 @@ import {
 	onSnapshot,
 	writeBatch,
 	increment,
+	orderBy,
 } from "firebase/firestore";
 import { auth, db, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -220,7 +221,13 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 
 	function getOrders(userId: string) {
 		const colRef = collection(db, "orders");
-		return getDocs(query(colRef, where("buyerId", "==", userId)));
+		return getDocs(
+			query(
+				colRef,
+				where("buyerId", "==", userId),
+				orderBy("createdAt", "desc"),
+			),
+		);
 	}
 
 	function getOrder(
