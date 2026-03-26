@@ -4,7 +4,7 @@ import { FirebaseError } from "firebase/app";
 import useAuth from "@/providers/auth/useAuth";
 import useFirebase from "@/firebase/useFirebase";
 
-function useOrders(sellerId?: boolean) {
+function useOrders(isSeller?: boolean) {
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<FirebaseError | null>(null);
@@ -22,7 +22,7 @@ function useOrders(sellerId?: boolean) {
 				setError(null);
 				const orders = await firebase.getOrders(
 					firebaseUser.uid,
-					sellerId,
+					isSeller,
 				);
 				const formattedOrders = orders.docs.map((order) => {
 					return {
@@ -32,7 +32,7 @@ function useOrders(sellerId?: boolean) {
 					};
 				});
 
-				if (sellerId) {
+				if (isSeller) {
 					const finalOrders = formattedOrders.map((order) => {
 						const myOrderItems = order.orderItems.filter(
 							(orderItem) =>
@@ -58,7 +58,7 @@ function useOrders(sellerId?: boolean) {
 			}
 		}
 		getOrders();
-	}, [firebaseUser, firebase, sellerId]);
+	}, [firebaseUser, firebase, isSeller]);
 
 	return { orders, loading, error };
 }

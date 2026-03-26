@@ -219,9 +219,9 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
-	function getOrders(userId: string, sellerId?: boolean) {
+	function getOrders(userId: string, isSeller?: boolean) {
 		const colRef = collection(db, "orders");
-		const q = sellerId
+		const q = isSeller
 			? query(
 					colRef,
 					where("sellerIds", "array-contains", userId),
