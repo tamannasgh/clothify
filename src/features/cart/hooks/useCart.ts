@@ -39,6 +39,7 @@ function useCart() {
 				priceAtPurchase: item.price,
 				quantity: item.quantity,
 				sellerId: item.sellerId,
+				status: "pending" as const,
 			};
 		});
 		const order = {

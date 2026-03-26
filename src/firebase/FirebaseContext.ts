@@ -52,7 +52,7 @@ type FirebaseContextType = {
 		userId: string,
 		callback: (cartItems: CartItem[]) => void,
 	) => Unsubscribe;
-	createOrder: (order: Order) => Promise<void>;
+	createOrder: (order: Omit<Order, "id">) => Promise<void>;
 	getOrders: (userId: string) => Promise<QuerySnapshot>;
 	getOrder: (
 		orderId: string,

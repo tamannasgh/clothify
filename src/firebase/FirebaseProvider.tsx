@@ -187,7 +187,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return unsubscribe;
 	}
 
-	async function createOrder(order: Order) {
+	async function createOrder(order: Omit<Order, "id">) {
 		try {
 			const batch = writeBatch(db);
 
@@ -255,8 +255,19 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 
 			const docRef = doc(db, "orders", order.id);
 
+			//updating status to cancel for each individual item
+			const updatedOrderItems = order.orderItems.map((orderItem) => {
+				return {
+					...orderItem,
+					status: "cancelled",
+				};
+			});
+
 			//update order doc in oredrs collection
-			batch.update(docRef, { status: "cancelled" });
+			batch.update(docRef, {
+				status: "cancelled",
+				orderItems: updatedOrderItems,
+			});
 
 			//update quantity of all products
 			order.orderItems.forEach((orderItem) => {

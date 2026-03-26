@@ -26,13 +26,16 @@ function OrderDetails() {
 				<div className="w-78">
 					{order.orderItems.map((orderItem) => {
 						return (
-							<div className="bg-gray-50 mb-3 shadow-md rounded-2xl flex">
+							<div
+								key={orderItem.id}
+								className="bg-gray-50 mb-3 shadow-md rounded-2xl flex"
+							>
 								<img
 									src={orderItem.images[0].downloadUrl}
 									alt={orderItem.name + "-img"}
 									className="w-32 h-32 rounded-l-2xl"
 								/>
-								<div className="p-3 px-5">
+								<div className="p-3 px-5 text-sm">
 									<h1 className="font-semibold">
 										{orderItem.name}
 									</h1>
@@ -46,6 +49,9 @@ function OrderDetails() {
 										Total:{" "}
 										{orderItem.quantity *
 											orderItem.priceAtPurchase}
+									</h2>
+									<h2>
+										Status: <span>{orderItem.status}</span>
 									</h2>
 								</div>
 							</div>

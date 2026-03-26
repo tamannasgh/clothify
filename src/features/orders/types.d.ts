@@ -8,6 +8,7 @@ type OrderItem = {
 	priceAtPurchase: number;
 	quantity: number;
 	sellerId: string;
+	status: "pending" | "delivered" | "cancelled";
 };
 type Order = {
 	id: string;
