@@ -219,15 +219,20 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
-	function getOrders(userId: string) {
+	function getOrders(userId: string, sellerId?: boolean) {
 		const colRef = collection(db, "orders");
-		return getDocs(
-			query(
-				colRef,
-				where("buyerId", "==", userId),
-				orderBy("createdAt", "desc"),
-			),
-		);
+		const q = sellerId
+			? query(
+					colRef,
+					where("sellerIds", "array-contains", userId),
+					orderBy("createdAt", "desc"),
+				)
+			: query(
+					colRef,
+					where("buyerId", "==", userId),
+					orderBy("createdAt", "desc"),
+				);
+		return getDocs(q);
 	}
 
 	function getOrder(

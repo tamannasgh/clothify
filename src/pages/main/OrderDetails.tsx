@@ -33,7 +33,7 @@ function OrderDetails() {
 								<img
 									src={orderItem.images[0].downloadUrl}
 									alt={orderItem.name + "-img"}
-									className="w-32 h-32 rounded-l-2xl"
+									className="w-32 h-32 rounded-l-2xl object-cover object-top"
 								/>
 								<div className="p-3 px-5 text-sm">
 									<h1 className="font-semibold">

@@ -4,7 +4,7 @@ import { FirebaseError } from "firebase/app";
 import useAuth from "@/providers/auth/useAuth";
 import useFirebase from "@/firebase/useFirebase";
 
-function useOrders() {
+function useOrders(sellerId?: boolean) {
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<FirebaseError | null>(null);
@@ -20,15 +20,30 @@ function useOrders() {
 			try {
 				setLoading(true);
 				setError(null);
-				const orders = await firebase.getOrders(firebaseUser.uid);
-				const finalOrders = orders.docs.map((order) => {
+				const orders = await firebase.getOrders(
+					firebaseUser.uid,
+					sellerId,
+				);
+				const formattedOrders = orders.docs.map((order) => {
 					return {
 						id: order.id,
 						...(order.data() as Omit<Order, "id" | "createdAt">),
 						createdAt: order.data().createdAt?.toDate(), //converting timestamp from firebase to date
 					};
 				});
-				setOrders(finalOrders);
+
+				if (sellerId) {
+					const finalOrders = formattedOrders.map((order) => {
+						const myOrderItems = order.orderItems.filter(
+							(orderItem) =>
+								orderItem.sellerId === firebaseUser.uid,
+						);
+						return { ...order, orderItems: myOrderItems };
+					});
+					setOrders(finalOrders);
+				} else {
+					setOrders(formattedOrders);
+				}
 			} catch (e) {
 				const err =
 					e instanceof FirebaseError
@@ -43,7 +58,7 @@ function useOrders() {
 			}
 		}
 		getOrders();
-	}, [firebaseUser, firebase]);
+	}, [firebaseUser, firebase, sellerId]);
 
 	return { orders, loading, error };
 }
