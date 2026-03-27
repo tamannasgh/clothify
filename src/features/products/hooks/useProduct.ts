@@ -50,7 +50,15 @@ function useProduct(productId: string) {
 		getProduct();
 	}, [firebase, productId]);
 
-	return { product, loading, error };
+	function deleteProduct() {
+		firebase.deleteProduct(productId);
+	}
+
+	function updateProduct(updatedProduct: Product) {
+		firebase.updateProduct(productId, updatedProduct);
+	}
+
+	return { product, loading, error, deleteProduct, updateProduct };
 }
 
 export default useProduct;
