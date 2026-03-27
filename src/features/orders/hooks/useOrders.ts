@@ -33,14 +33,16 @@ function useOrders(isSeller?: boolean) {
 				});
 
 				if (isSeller) {
-					const finalOrders = formattedOrders.map((order) => {
-						const myOrderItems = order.orderItems.filter(
-							(orderItem) =>
-								orderItem.sellerId === firebaseUser.uid,
-						);
-						return { ...order, orderItems: myOrderItems };
-					});
-					setOrders(finalOrders);
+					const formattedOrdersSeller = formattedOrders.map(
+						(order) => {
+							const myOrderItems = order.orderItems.filter(
+								(orderItem) =>
+									orderItem.sellerId === firebaseUser.uid,
+							);
+							return { ...order, orderItems: myOrderItems };
+						},
+					);
+					setOrders(formattedOrdersSeller);
 				} else {
 					setOrders(formattedOrders);
 				}
@@ -60,7 +62,11 @@ function useOrders(isSeller?: boolean) {
 		getOrders();
 	}, [firebaseUser, firebase, isSeller]);
 
-	return { orders, loading, error };
+	function markAsDelivered(orderId: string, orderItemId: string) {
+		firebase.markAsDelivered(orderId, orderItemId);
+	}
+
+	return { orders, loading, error, markAsDelivered };
 }
 
 export default useOrders;

@@ -30,7 +30,7 @@ function Cart() {
 						<img
 							src={item.images[0].downloadUrl}
 							alt={item.name + " image"}
-							className="w-24 h-24 rounded-l-2xl"
+							className="w-24 h-24 rounded-l-2xl object-cover object-top"
 						/>
 						<div className="flex flex-wrap space-x-3 space-y-3 items-center justify-between w-full px-7">
 							<div>

@@ -59,6 +59,7 @@ type FirebaseContextType = {
 		callback: (orderDetails: Order | null) => void,
 	) => Unsubscribe;
 	cancelOrder: (order: Order) => Promise<void>;
+	markAsDelivered: (orderId: string, orderItemId: string) => Promise<void>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);

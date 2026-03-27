@@ -289,6 +289,52 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
+	async function markAsDelivered(orderId: string, orderItemId: string) {
+		try {
+			const batch = writeBatch(db);
+			const orderDocRef = doc(db, "orders", orderId);
+
+			const order = await getDoc(orderDocRef);
+			const finalOrder = {
+				id: order.id,
+				...(order.data() as Omit<Order, "id">),
+			};
+
+			const areAllItemsDelivered = finalOrder.orderItems.map((item) => {
+				if (item.id === orderItemId) {
+					return true;
+				}
+				return item.status === "delivered";
+			});
+
+			const updatedOrderItems = finalOrder.orderItems.map((orderItem) => {
+				if (orderItem.id === orderItemId) {
+					return {
+						...orderItem,
+						status: "delivered",
+					};
+				}
+				return orderItem;
+			});
+
+			if (areAllItemsDelivered.includes(false)) {
+				batch.update(orderDocRef, {
+					orderItems: updatedOrderItems,
+				});
+			} else {
+				batch.update(orderDocRef, {
+					status: "delivered",
+					orderItems: updatedOrderItems,
+				});
+			}
+
+			await batch.commit();
+		} catch (err) {
+			console.log("Error occured: ", err);
+			throw err;
+		}
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -310,6 +356,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				getOrders,
 				getOrder,
 				cancelOrder,
+				markAsDelivered,
 			}}
 		>
 			{children}
