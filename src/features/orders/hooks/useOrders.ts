@@ -4,7 +4,7 @@ import { FirebaseError } from "firebase/app";
 import useAuth from "@/providers/auth/useAuth";
 import useFirebase from "@/firebase/useFirebase";
 
-function useOrders(isSeller?: boolean) {
+function useOrders() {
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<FirebaseError | null>(null);
@@ -20,10 +20,7 @@ function useOrders(isSeller?: boolean) {
 			try {
 				setLoading(true);
 				setError(null);
-				const orders = await firebase.getOrders(
-					firebaseUser.uid,
-					isSeller,
-				);
+				const orders = await firebase.getOrders(firebaseUser.uid);
 				const formattedOrders = orders.docs.map((order) => {
 					return {
 						id: order.id,
@@ -32,20 +29,7 @@ function useOrders(isSeller?: boolean) {
 					};
 				});
 
-				if (isSeller) {
-					const formattedOrdersSeller = formattedOrders.map(
-						(order) => {
-							const myOrderItems = order.orderItems.filter(
-								(orderItem) =>
-									orderItem.sellerId === firebaseUser.uid,
-							);
-							return { ...order, orderItems: myOrderItems };
-						},
-					);
-					setOrders(formattedOrdersSeller);
-				} else {
-					setOrders(formattedOrders);
-				}
+				setOrders(formattedOrders);
 			} catch (e) {
 				const err =
 					e instanceof FirebaseError
@@ -60,13 +44,9 @@ function useOrders(isSeller?: boolean) {
 			}
 		}
 		getOrders();
-	}, [firebaseUser, firebase, isSeller]);
+	}, [firebaseUser, firebase]);
 
-	function markAsDelivered(orderId: string, orderItemId: string) {
-		firebase.markAsDelivered(orderId, orderItemId);
-	}
-
-	return { orders, loading, error, markAsDelivered };
+	return { orders, loading, error };
 }
 
 export default useOrders;

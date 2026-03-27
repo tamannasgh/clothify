@@ -53,13 +53,17 @@ type FirebaseContextType = {
 		callback: (cartItems: CartItem[]) => void,
 	) => Unsubscribe;
 	createOrder: (order: Omit<Order, "id">) => Promise<void>;
-	getOrders: (userId: string, isSeller?: boolean) => Promise<QuerySnapshot>;
+	getOrders: (userId: string) => Promise<QuerySnapshot>;
 	getOrder: (
 		orderId: string,
 		callback: (orderDetails: Order | null) => void,
 	) => Unsubscribe;
 	cancelOrder: (order: Order) => Promise<void>;
 	markAsDelivered: (orderId: string, orderItemId: string) => Promise<void>;
+	getSellerOrders: (
+		sellerId: string,
+		callback: (sellerOrders: Order[]) => void,
+	) => Unsubscribe;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);

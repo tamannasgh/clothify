@@ -219,20 +219,15 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
-	function getOrders(userId: string, isSeller?: boolean) {
+	function getOrders(userId: string) {
 		const colRef = collection(db, "orders");
-		const q = isSeller
-			? query(
-					colRef,
-					where("sellerIds", "array-contains", userId),
-					orderBy("createdAt", "desc"),
-				)
-			: query(
-					colRef,
-					where("buyerId", "==", userId),
-					orderBy("createdAt", "desc"),
-				);
-		return getDocs(q);
+		return getDocs(
+			query(
+				colRef,
+				where("buyerId", "==", userId),
+				orderBy("createdAt", "desc"),
+			),
+		);
 	}
 
 	function getOrder(
@@ -260,8 +255,13 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 
 			const docRef = doc(db, "orders", order.id);
 
-			//updating status to cancel for each individual item
+			//updating status to cancel for each individual item that are not delivered yet
 			const updatedOrderItems = order.orderItems.map((orderItem) => {
+				if (orderItem.status === "delivered") {
+					return {
+						...orderItem,
+					};
+				}
 				return {
 					...orderItem,
 					status: "cancelled",
@@ -274,12 +274,14 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				orderItems: updatedOrderItems,
 			});
 
-			//update quantity of all products
+			//update quantity of all products that are pending
 			order.orderItems.forEach((orderItem) => {
-				const orderItemRef = doc(db, "products", orderItem.id);
-				batch.update(orderItemRef, {
-					stock: increment(orderItem.quantity),
-				});
+				if (orderItem.status === "pending") {
+					const orderItemRef = doc(db, "products", orderItem.id);
+					batch.update(orderItemRef, {
+						stock: increment(orderItem.quantity),
+					});
+				}
 			});
 
 			await batch.commit();
@@ -335,6 +337,31 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
+	function getSellerOrders(
+		sellerId: string,
+		callback: (sellerOrders: Order[]) => void,
+	) {
+		const colRef = collection(db, "orders");
+		const q = query(
+			colRef,
+			where("sellerIds", "array-contains", sellerId),
+			orderBy("createdAt", "desc"),
+		);
+
+		const unsubscribe = onSnapshot(q, (querySnapshot) => {
+			const sellerOrders = querySnapshot.docs.map((sellerOrder) => {
+				return {
+					id: sellerOrder.id,
+					...(sellerOrder.data() as Omit<Order, "id" | "createdAt">),
+					createdAt: sellerOrder.data().createdAt.toDate(),
+				};
+			});
+			callback(sellerOrders);
+		});
+
+		return unsubscribe;
+	}
+
 	return (
 		<FirebaseContext.Provider
 			value={{
@@ -357,6 +384,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				getOrder,
 				cancelOrder,
 				markAsDelivered,
+				getSellerOrders,
 			}}
 		>
 			{children}

@@ -1,21 +1,15 @@
 import { Spinner } from "@/components/ui/spinner";
-import useOrders from "@/features/orders/hooks/useOrders";
+import useSellerOrderItems from "@/features/orders/hooks/useSellerOrders";
 import clsx from "clsx";
 
 function Orders() {
-	const { orders, loading, error, markAsDelivered } = useOrders(true);
+	const { myOrderItems, dataLoaded, markAsDelivered } = useSellerOrderItems();
 
-	if (loading) {
+	if (!dataLoaded) {
 		return <Spinner className="w-1/6 m-auto h-1/12 mt-24" />;
 	}
 
-	if (error) {
-		return (
-			<h1 className="text-3xl font-semibold">Something went wrong!</h1>
-		);
-	}
-
-	const myItems = orders.flatMap((order) => {
+	const myAllItems = myOrderItems.flatMap((order) => {
 		return order.orderItems.map((orderItem) => {
 			return {
 				...orderItem,
@@ -25,16 +19,16 @@ function Orders() {
 		});
 	});
 
-	console.log(myItems);
+	console.log(myAllItems);
 
-	return myItems.length < 1 ? (
+	return myAllItems.length < 1 ? (
 		<h1 className="text-3xl font-semibold">
 			No Orders yet! lets upload whats in demand!
 		</h1>
 	) : (
 		<div>
 			<div className="w-full space-y-5 pb-7">
-				{myItems.map((item) => {
+				{myAllItems.map((item) => {
 					return (
 						<div className="flex flex-wrap space-x-3 bg-gray-50 w-full rounded-2xl shadow-md">
 							<img

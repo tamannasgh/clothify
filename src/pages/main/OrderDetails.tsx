@@ -15,8 +15,6 @@ function OrderDetails() {
 	if (!order)
 		return <h1 className="text-3xl font-semibold">Invalid order</h1>;
 
-	console.log(order);
-
 	return (
 		<div className="w-screen">
 			<h1 className="text-2xl font-semibold">
