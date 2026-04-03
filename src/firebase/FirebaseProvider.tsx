@@ -27,7 +27,7 @@ import { auth, db, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import type { CartItem } from "@/features/cart/hooks/useCartItem";
 import type { Order } from "@/features/orders/types";
-import type { Product } from "@/features/products/hooks/useProduct";
+import type { UpdateProduct } from "@/features/products/types";
 
 function FirebaseProvider({ children }: { children: ReactNode }) {
 	function signupWithEmail(email: string, password: string) {
@@ -135,9 +135,9 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return deleteDoc(doc(db, "products", productId));
 	}
 
-	function updateProduct(productId: string, updatedProduct: Product) {
+	function updateProduct(productId: string, updatedProduct: UpdateProduct) {
 		const docRef = doc(db, "products", productId);
-		return updateDoc(docRef, updatedProduct);
+		return updateDoc(docRef, { ...updatedProduct });
 	}
 
 	function addToCart(userId: string, productId: string) {
@@ -387,6 +387,7 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 				getProduct,
 				deleteProduct,
 				updateProduct,
+				uploadFileAndGetUrl,
 				addToCart,
 				updateCartItemQuantity,
 				getCartItemCount,

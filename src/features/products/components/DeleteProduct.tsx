@@ -1,5 +1,5 @@
 import { Trash } from "lucide-react";
-import type { Product } from "../hooks/useProduct";
+import type { Product } from "../types";
 import useProduct from "../hooks/useProduct";
 
 function DeleteProduct({ product }: { product: Product }) {

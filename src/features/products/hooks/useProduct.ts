@@ -1,23 +1,15 @@
 import useFirebase from "@/firebase/useFirebase";
 import { FirebaseError } from "firebase/app";
 import { useEffect, useState } from "react";
-
-export type Product = {
-	id: string;
-	name: string;
-	des: string;
-	price: number;
-	stock: number;
-	images: { downloadUrl: string; imagePath: string }[];
-	sellerId: string;
-	createdAt: Date;
-};
+import type { Product, UpdateProduct } from "../types";
+import useAuth from "@/providers/auth/useAuth";
 
 function useProduct(productId: string) {
 	const [product, setProduct] = useState<Product | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<FirebaseError | null>(null);
 	const firebase = useFirebase();
+	const { firebaseUser } = useAuth();
 
 	useEffect(() => {
 		async function getProduct() {
@@ -54,8 +46,32 @@ function useProduct(productId: string) {
 		firebase.deleteProduct(productId);
 	}
 
-	function updateProduct(updatedProduct: Product) {
-		firebase.updateProduct(productId, updatedProduct);
+	async function updateProduct(
+		updatedProduct: Omit<UpdateProduct, "images"> & {
+			images?: File[];
+		},
+	) {
+		if (!firebaseUser) return;
+
+		const { images, ...finalUpdatedProduct } = updatedProduct;
+
+		if (images) {
+			const imagesUrls = await Promise.all(
+				images.map(async (img) => {
+					return await firebase.uploadFileAndGetUrl(
+						img,
+						`products/${firebaseUser.uid}/${productId}/${Date.now()}-${img.name}`,
+					);
+				}),
+			);
+
+			return firebase.updateProduct(productId, {
+				...finalUpdatedProduct,
+				images: imagesUrls,
+			});
+		} else {
+			return firebase.updateProduct(productId, finalUpdatedProduct);
+		}
 	}
 
 	return { product, loading, error, deleteProduct, updateProduct };

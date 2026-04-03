@@ -19,6 +19,7 @@ import BecomeSeller from "@/pages/seller/BecomeSeller";
 import NonSellerRoute from "@/route-access-control/NonSellerRoute";
 import ProductDetails from "./pages/shared/ProductDetails";
 import OrderDetails from "./pages/main/OrderDetails";
+import EditProduct from "./pages/seller/EditProduct";
 
 function App() {
 	return (
@@ -87,6 +88,10 @@ function App() {
 										<Route
 											path=":productId"
 											element={<ProductDetails />}
+										/>
+										<Route
+											path=":productId/edit"
+											element={<EditProduct />}
 										/>
 									</Route>
 									<Route

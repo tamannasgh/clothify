@@ -1,6 +1,6 @@
 import type { CartItem } from "@/features/cart/hooks/useCartItem";
 import type { Order } from "@/features/orders/types";
-import type { Product } from "@/features/products/hooks/useProduct";
+import type { UpdateProduct } from "@/features/products/types";
 import type { UserCredential } from "firebase/auth";
 import type {
 	DocumentSnapshot,
@@ -41,8 +41,15 @@ type FirebaseContextType = {
 	deleteProduct: (productId: string) => Promise<void>;
 	updateProduct: (
 		productId: string,
-		updatedProduct: Product,
+		updatedProduct: UpdateProduct,
 	) => Promise<void>;
+	uploadFileAndGetUrl: (
+		image: File,
+		imagePath: string,
+	) => Promise<{
+		downloadUrl: string;
+		imagePath: string;
+	}>;
 	addToCart: (userId: string, productId: string) => Promise<void>;
 	updateCartItemQuantity: (
 		userId: string,
