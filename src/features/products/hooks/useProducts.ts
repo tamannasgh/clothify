@@ -1,7 +1,7 @@
 import useFirebase from "@/firebase/useFirebase";
 import { FirebaseError } from "firebase/app";
 import { useEffect, useState } from "react";
-import { type Product } from "@/features/products/hooks/useProduct";
+import type { Product } from "@/features/products/types";
 
 function useProducts(sellerId?: string) {
 	const [products, setProducts] = useState<Product[]>([]);

@@ -43,7 +43,7 @@ function useProduct(productId: string) {
 	}, [firebase, productId]);
 
 	function deleteProduct() {
-		firebase.deleteProduct(productId);
+		return firebase.deleteProduct(productId);
 	}
 
 	async function updateProduct(
