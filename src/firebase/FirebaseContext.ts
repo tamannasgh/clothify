@@ -8,6 +8,7 @@ import type {
 	Unsubscribe,
 } from "firebase/firestore";
 import { createContext } from "react";
+import type { NavigateFunction } from "react-router";
 
 type FirebaseContextType = {
 	signupWithEmail: (
@@ -65,7 +66,10 @@ type FirebaseContextType = {
 		userId: string,
 		callback: (cartItems: CartItem[]) => void,
 	) => Unsubscribe;
-	createOrder: (order: Omit<Order, "id">) => Promise<void>;
+	createOrder: (
+		order: Omit<Order, "id">,
+		navigate: NavigateFunction,
+	) => Promise<void>;
 	getOrders: (userId: string) => Promise<QuerySnapshot>;
 	getOrder: (
 		orderId: string,

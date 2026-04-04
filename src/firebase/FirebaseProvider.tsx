@@ -23,11 +23,13 @@ import {
 	increment,
 	orderBy,
 } from "firebase/firestore";
-import { auth, db, storage } from "./firebase";
+import { auth, db, functions, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import type { CartItem } from "@/features/cart/hooks/useCartItem";
 import type { Order } from "@/features/orders/types";
 import type { UpdateProduct } from "@/features/products/types";
+import { httpsCallable } from "firebase/functions";
+import type { NavigateFunction } from "react-router";
 
 function FirebaseProvider({ children }: { children: ReactNode }) {
 	function signupWithEmail(email: string, password: string) {
@@ -197,32 +199,71 @@ function FirebaseProvider({ children }: { children: ReactNode }) {
 		return unsubscribe;
 	}
 
-	async function createOrder(order: Omit<Order, "id">) {
+	async function createOrder(
+		order: Omit<Order, "id">,
+		navigate: NavigateFunction,
+	) {
 		try {
-			const batch = writeBatch(db);
-
-			const docRef = doc(collection(db, "orders"));
-
-			//create order doc in oredrs collection
-			batch.set(docRef, order);
-
-			//clear cart - delete all docs from cart collection
-			const cartDocs = await getDocs(
-				collection(db, "users", order.buyerId, "cart"),
+			const createRazorpayOrder = httpsCallable(
+				functions,
+				"createRazorpayOrder",
 			);
-			cartDocs.forEach((cartDoc) => {
-				batch.delete(cartDoc.ref);
+			const result = await createRazorpayOrder({
+				amount: order.grandTotal * 100,
 			});
+			console.log(result);
 
-			//update quantity of all products
-			order.orderItems.forEach((orderItem) => {
-				const orderItemRef = doc(db, "products", orderItem.id);
-				batch.update(orderItemRef, {
-					stock: increment(-orderItem.quantity),
-				});
-			});
+			const data = result.data as { id: string };
 
-			await batch.commit();
+			const options = {
+				key: "rzp_test_SZMh8p1pn1fdXN",
+				amount: order.grandTotal * 100,
+				currency: "INR",
+				order_id: data.id,
+				handler: async function (response: any) {
+					console.log(response, "hey");
+
+					const verifyPayment = httpsCallable(
+						functions,
+						"verifyPayment",
+					);
+					const isPaymentVarified = await verifyPayment(response);
+
+					if (isPaymentVarified) {
+						const batch = writeBatch(db);
+
+						const docRef = doc(collection(db, "orders"));
+						//create order doc in oredrs collection
+						batch.set(docRef, order);
+						//clear cart - delete all docs from cart collection
+						const cartDocs = await getDocs(
+							collection(db, "users", order.buyerId, "cart"),
+						);
+						cartDocs.forEach((cartDoc) => {
+							batch.delete(cartDoc.ref);
+						});
+						//update quantity of all products
+						order.orderItems.forEach((orderItem) => {
+							const orderItemRef = doc(
+								db,
+								"products",
+								orderItem.id,
+							);
+							batch.update(orderItemRef, {
+								stock: increment(-orderItem.quantity),
+							});
+						});
+
+						await batch.commit();
+						navigate("/orders");
+					} else {
+						throw new Error("Payment Not Succesful.");
+					}
+				},
+			};
+
+			const rzp = new (window as any).Razorpay(options);
+			rzp.open();
 		} catch (err) {
 			console.log("Error occured: ", err);
 			throw err;
